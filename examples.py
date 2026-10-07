@@ -8,8 +8,6 @@
 ⚠️ 不填 key 走公共额度（约 3 秒/次、7 天 31 篇），多公司示例会自动 sleep 等限流。
     跑回测建议先去 datasink.ing 领免费 key，把 DataSinkingProvider(api_key="...") 填上。
 """
-import time
-
 import pandas as pd
 
 from qlib_datasinking import DataSinkingProvider
@@ -47,7 +45,6 @@ def example2_peers():
         table = find_table(dfs, "营业收入")  # 主要会计数据表（含营收/净利润/ROE）
         print(f"\n{name}（{sym}）：")
         print(table.head(4).to_string() if table is not None else "  未找到")
-        time.sleep(3.5)  # 公共额度限速：多公司时等一等
 
 
 def example3_qlib():

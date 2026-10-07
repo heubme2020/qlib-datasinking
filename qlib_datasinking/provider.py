@@ -7,6 +7,7 @@ Usage:
     dfs = p.tables("600519.SS", limit=3)      # balance sheet / income statement / cash flow
 """
 import re
+import time
 from typing import List
 
 import pandas as pd
@@ -76,9 +77,11 @@ class DataSinkingProvider:
                 "with_content": 1, "apikey": self.api_key,
             }, timeout=120)
             return data.get("items", [])
-        # 无 key：公共端点两步（列表 → 按 id 取全文）
+        # 无 key：公共端点两步（列表 → 按 id 取全文）。公共额度限速约 3 秒/篇，
+        # sleep 一下避免连环 429。
         out: List[dict] = []
         for meta in self.list_reports(symbol, limit):
+            time.sleep(3.2)
             out.append(self._get(f"/public/documents/{meta['id']}", {}))
         return out
 
