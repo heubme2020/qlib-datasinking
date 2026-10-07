@@ -46,16 +46,23 @@ class DataSinkingProvider:
         self.api_key = (api_key or "").strip()
 
     def _get(self, path: str, params: dict, timeout: int = 60) -> dict:
-        r = requests.get(f"{self.BASE}{path}", params=params, timeout=timeout)
-        if r.status_code == 429:
-            detail = ""
+        last_exc: Exception | None = None
+        for _ in range(3):  # 网络抖动（SSL/连接重置）自动重试 3 次
             try:
-                detail = r.json().get("detail", "")
-            except Exception:
-                pass
-            raise QuotaError(_quota_message(detail))
-        r.raise_for_status()
-        return r.json()
+                r = requests.get(f"{self.BASE}{path}", params=params, timeout=timeout)
+                if r.status_code == 429:
+                    detail = ""
+                    try:
+                        detail = r.json().get("detail", "")
+                    except Exception:
+                        pass
+                    raise QuotaError(_quota_message(detail))
+                r.raise_for_status()
+                return r.json()
+            except requests.exceptions.RequestException as e:
+                last_exc = e
+                time.sleep(1.5)
+        raise last_exc  # type: ignore[misc]
 
     def list_reports(self, symbol: str, limit: int = 10) -> List[dict]:
         """Report metadata for a symbol, newest first."""
