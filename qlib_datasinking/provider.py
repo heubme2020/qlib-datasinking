@@ -23,9 +23,9 @@ def _quota_message(detail: str = "") -> str:
     msg = (
         "DataSinking rate limit / quota exceeded. Tiers:\n"
         "  no key (public): 31 reports / 7 days / IP, ~1 request / 3 s\n"
-        "  free key:        8,191 reports / 7 days, 3 requests / s (free at datasink.ing)\n"
+        "  free key:        8,191 reports / 7 days, 3 requests / s\n"
         "  paid ($31/yr):   524,287 reports / 7 days, 31 requests / s\n"
-        f"Get / upgrade a key: {PRICING_URL}"
+        f"  {PRICING_URL}"
     )
     if detail:
         msg += f"\n(server: {detail})"
