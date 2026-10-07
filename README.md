@@ -7,8 +7,10 @@ DataSinking already parses full-text filings into clean Markdown (tables intact)
 ## Install
 
 ```bash
-pip install qlib-datasinking
+pip install git+https://github.com/heubme2020/qlib-datasinking
 ```
+
+Example 3 also needs Qlib: `pip install pyqlib`.
 
 ## Three lines to a DataFrame
 
@@ -26,10 +28,19 @@ print(dfs[2].head()) # the "key financial data" table
 
 ## Three examples
 
-The repo's [`examples.py`](https://github.com/heubme2020/qlib-datasinking/blob/main/examples.py) has three runnable examples:
+The repo's [`examples.py`](https://github.com/heubme2020/qlib-datasinking/blob/main/examples.py) has three runnable examples. Set your key as an env var and run:
+
+```bash
+# Linux / macOS
+export DATASINKING_API_KEY=your_free_key
+python examples.py
+
+# Windows (PowerShell)
+$env:DATASINKING_API_KEY="your_free_key"; python examples.py
+```
 
 1. **Fetch a filing** and browse its statements.
-2. **Peer comparison** — pull the "key financial data" table for three companies side by side.
+2. **Peer comparison** — the "key financial data" table for three companies side by side.
 3. **Fundamental factor → Qlib format** — turn revenue into a `(instrument, datetime, feature, value)` table that `D.features()` consumes.
 
 ```python
@@ -39,7 +50,7 @@ from qlib_datasinking import DataSinkingProvider
 p = DataSinkingProvider()
 for sym in ["600519.SS", "000858.SZ", "000568.SZ"]:
     dfs = p.tables(sym, limit=1)
-    # find the table containing "营业收入" (revenue) and compare
+    # find the table containing "营业" / "Revenue" and compare
 ```
 
 ## API key, quotas and rate limits
@@ -70,3 +81,7 @@ Covers 6 markets: US, China, Japan, Korea, Taiwan, UK.
 
 - GitHub: https://github.com/heubme2020/qlib-datasinking
 - API docs: https://datasink.ing/docs
+
+## Troubleshooting
+
+Installing `pyqlib` may pull numpy 2.x; if you then see a `_ARRAY_API` warning from `bottleneck` on `import pandas`, it's harmless — pandas just falls back to a pure-Python path.

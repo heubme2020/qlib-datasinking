@@ -7,8 +7,10 @@ DataSinking 已经把财报全文转成了干净的 Markdown（表格都在）�
 ## 安装
 
 ```bash
-pip install qlib-datasinking
+pip install git+https://github.com/heubme2020/qlib-datasinking
 ```
+
+例 3 还需要 Qlib：`pip install pyqlib`。
 
 ## 三步拿到 DataFrame
 
@@ -26,7 +28,16 @@ print(dfs[2].head()) # 「主要会计数据」那张
 
 ## 三个例子
 
-仓库里的 [`examples.py`](https://github.com/heubme2020/qlib-datasinking/blob/main/examples.py) 有三个可直接跑的例子：
+仓库里的 [`examples.py`](https://github.com/heubme2020/qlib-datasinking/blob/main/examples.py) 有三个可直接跑的例子。把 key 设成环境变量再跑：
+
+```bash
+# Linux / macOS
+export DATASINKING_API_KEY=你的免费key
+python examples.py
+
+# Windows（PowerShell）
+$env:DATASINKING_API_KEY="你的免费key"; python examples.py
+```
 
 1. **拉财报看三大报表**（同花顺 300033.SZ）
 2. **同业横向对比**（茅台 / 五粮液 / 泸州老窖的「主要会计数据」）
@@ -39,7 +50,7 @@ from qlib_datasinking import DataSinkingProvider
 p = DataSinkingProvider()
 for sym in ["600519.SS", "000858.SZ", "000568.SZ"]:
     dfs = p.tables(sym, limit=1)
-    # 找含「营业收入」的那张表，横向对比
+    # 找含「营业」/「Revenue」的那张表，横向对比
 ```
 
 ## API key / 限额 / 限速
@@ -68,3 +79,7 @@ for sym in ["600519.SS", "000858.SZ", "000568.SZ"]:
 
 - GitHub：https://github.com/heubme2020/qlib-datasinking
 - API 文档：https://datasink.ing/docs
+
+## 常见问题
+
+装 `pyqlib` 可能把 numpy 拉到 2.x，之后 `import pandas` 时若看到 `bottleneck` 的 `_ARRAY_API` 警告，是**无害的**——pandas 会自动回退到纯 Python 路径，不影响使用。
