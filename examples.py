@@ -28,8 +28,8 @@ def find_table(dfs, keyword):
 def example1_fetch():
     """例 1：拉一份财报，看三大报表长什么样。"""
     print("=" * 70)
-    print("例 1：贵州茅台最新一份财报的表格一览")
-    dfs = p.tables("600519.SS", limit=1)
+    print("例 1：同花顺（300033.SZ）最新一份财报的表格一览")
+    dfs = p.tables("300033.SZ", limit=1)
     print(f"共 {len(dfs)} 张表（资产负债表/利润表/现金流量表/附注都在里面）\n")
     for i, df in enumerate(dfs[:6]):
         cols = list(df.columns)[:3]
