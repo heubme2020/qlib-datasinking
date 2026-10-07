@@ -12,6 +12,25 @@ from typing import List
 import pandas as pd
 import requests
 
+PRICING_URL = "https://datasink.ing/pricing"
+
+
+class QuotaError(RuntimeError):
+    """Raised on 429 (rate limit or quota) with tier info and an upgrade link."""
+
+
+def _quota_message(detail: str = "") -> str:
+    msg = (
+        "DataSinking rate limit / quota exceeded. Tiers:\n"
+        "  no key (public): 31 reports / 7 days / IP, ~1 request / 3 s\n"
+        "  free key:        8,191 reports / 7 days, 3 requests / s (free at datasink.ing)\n"
+        "  paid ($31/yr):   524,287 reports / 7 days, 31 requests / s\n"
+        f"Get / upgrade a key: {PRICING_URL}"
+    )
+    if detail:
+        msg += f"\n(server: {detail})"
+    return msg
+
 
 class DataSinkingProvider:
     """Data source backed by DataSinking (https://datasink.ing).
@@ -27,6 +46,13 @@ class DataSinkingProvider:
 
     def _get(self, path: str, params: dict, timeout: int = 60) -> dict:
         r = requests.get(f"{self.BASE}{path}", params=params, timeout=timeout)
+        if r.status_code == 429:
+            detail = ""
+            try:
+                detail = r.json().get("detail", "")
+            except Exception:
+                pass
+            raise QuotaError(_quota_message(detail))
         r.raise_for_status()
         return r.json()
 
