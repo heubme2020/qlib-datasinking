@@ -85,3 +85,5 @@ Covers 6 markets: US, China, Japan, Korea, Taiwan, UK.
 ## Troubleshooting
 
 Installing `pyqlib` may pull numpy 2.x; if you then see a `_ARRAY_API` warning from `bottleneck` on `import pandas`, it's harmless — pandas just falls back to a pure-Python path.
+
+**Earn $7 per yearly referral** — one-time, PayPal, $31 minimum withdrawal: https://datasink.ing/affiliate
